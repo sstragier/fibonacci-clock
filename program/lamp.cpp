@@ -1,4 +1,6 @@
 #include "Arduino.h"
+
+#include "constants.h"
 #include "lamp.h"
 
 Lamp::Lamp(Leds* leds)
@@ -15,9 +17,11 @@ void Lamp::invalidate()
 
 void Lamp::loop()
 {
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < NUM_SQUARES; i++)
     {
-        CRGB color = wheel((iteration + i) & 255);
+        int offset = (i * 255) / NUM_SQUARES;
+        int position = (iteration + offset) % 256;
+        CRGB color = wheel(position);
         leds->setSquareColor(i, color);
     }
 
@@ -26,7 +30,7 @@ void Lamp::loop()
     if ((millis() - delay) > lastTransitionTime)
     {
         lastTransitionTime = millis();
-        
+
         // If enough time has passed, increase the iteration for the next loop
         iteration++;
         if (iteration >= 256) iteration = 0;
