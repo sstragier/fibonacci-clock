@@ -37,6 +37,8 @@ public:
     void addHours(int hours);
     void addMinutes(int minutes);
     void nextPalette();
+    int getPalette();
+    void setPalette(int paletteIndex);
     // Causes the clock to redraw on the next tick
     void invalidate();
 };

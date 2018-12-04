@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <EEPROM.h>
 
 #include "button.h"
 #include "clock.h"
@@ -28,6 +29,10 @@ void setup()
 
     leds.begin();
     clock.begin();
+
+    loadSettings();
+    // If the settings have the clock turned off, don't turn it on
+    if (!isOn) turnOff();
 }
 
 void loop()
@@ -71,6 +76,7 @@ void loop()
     {
         Serial.println("Next color palette");
         clock.nextPalette();
+        saveSettings();
     }
 
     if (!isOn) return;
@@ -91,6 +97,7 @@ void checkButtons() {
 
 void turnOn() {
     isOn = true;
+    saveSettings();
 
     // Make sure that the clock/lamp immediately re-render
     clock.invalidate();
@@ -99,6 +106,8 @@ void turnOn() {
 
 void turnOff() {
     isOn = false;
+    saveSettings();
+
     leds.off();
 }
 
@@ -115,4 +124,33 @@ void nextMode() {
             clock.invalidate();
             break;
     }
+    
+    saveSettings();
+}
+
+void loadSettings()
+{
+    // FYI uninitialized EEPROM values default to 255
+    byte value = EEPROM.read(0);
+    if (value == MODE_CLOCK || value == MODE_LAMP) mode = value;
+
+    isOn = EEPROM.read(1) != 0;
+    clock.setPalette(EEPROM.read(2));
+
+    Serial.print("Loaded mode: ");
+    Serial.print(mode, DEC);
+    Serial.println(mode == MODE_LAMP ? " (Lamp)" : " (Clock)");
+
+    Serial.print("Loaded on/off: ");
+    Serial.println(isOn ? "on" : "off");
+
+    Serial.print("Loaded color palette: ");
+    Serial.println(clock.getPalette());
+}
+
+void saveSettings()
+{
+    EEPROM.write(0, mode);
+    EEPROM.write(1, (byte)isOn);
+    EEPROM.write(2, clock.getPalette());
 }

@@ -40,7 +40,17 @@ void Clock::addMinutes(int minutes)
 
 void Clock::nextPalette()
 {
-    paletteIndex = (paletteIndex + 1) % MAX_PALETTES;
+    setPalette(paletteIndex + 1);
+}
+
+int Clock::getPalette()
+{
+    return paletteIndex;
+}
+
+void Clock::setPalette(int paletteIndex)
+{
+    this->paletteIndex = paletteIndex % MAX_PALETTES;
     invalidate();
 }
 
