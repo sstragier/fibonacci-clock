@@ -7,11 +7,8 @@ Clock::Clock() {
 }
 
 void Clock::begin() {
-    Serial.println("Clock constructor");
     Wire.begin();
-    Serial.println("started Wire");
     rtc.begin();
-    Serial.println("started RTC");
 
     if (rtc.lostPower()) {
         Serial.println("RTC lost power, lets set the time!");
@@ -24,12 +21,36 @@ void Clock::begin() {
 
     FastLED.addLeds<WS2811, LED_PIN, RGB>(leds, NUM_LEDS);
 }
+void Clock::addHours(int hours) {
+    DateTime now = getTime();
+    setTime(DateTime(now.unixtime() + hours * 3600));
+}
+
+void Clock::addMinutes(int minutes) {
+    DateTime now = getTime();
+    // Add the minutes to the time and if it goes over 60, roll it over so that setting the minutes doesn't affect the hours
+    minutes = (now.minute() + minutes) % 60;
+    setTime(DateTime(now.year(), now.month(), now.day(), now.hour(), minutes));
+}
+
+void Clock::nextPalette() {
+    paletteIndex = (paletteIndex + 1) % MAX_PALETTES;
+    invalidate();
+}
+
+void Clock::invalidate() {
+    // Cause the clock to update the lights by invalidating the previous hour and minutes
+    prevHour = -1;
+    prevMinute = -1;
+}
 
 void Clock::loop() {
     DateTime now = getTime();
     
+    // If the hour and minute aren't manipulated here for the display, it means that every minute the clock could change
     int hour = now.hour();
-    int minute = now.minute();
+    if (hour > 12) hour %= 12;
+    int minute = now.minute() / 5;
     
     if (hour == prevHour && minute == prevMinute) return;
 
@@ -40,8 +61,6 @@ void Clock::loop() {
 }
 
 void Clock::displayTime(int hour, int minute) {
-    if (hour > 12) hour %= 12;
-    minute /= 5;
 
     resetSquareFlags();
     setSquareFlags(hour, FLAG_HOUR_ON);
@@ -64,7 +83,7 @@ void Clock::updateLeds() {
 }
 
 void Clock::updateLed(int squareIndex, byte flags) {
-    CRGB color = colors[0][flags];
+    CRGB color = colors[paletteIndex][flags];
 
     switch (squareIndex) {
         case 0: leds[9] = color; break;

@@ -16,8 +16,9 @@ private:
     RTC_DS3231 rtc;
     CRGB leds[NUM_LEDS];
     byte squareFlags[NUM_SQUARES];
-    int prevHour = 9999;
-    int prevMinute = 9999;
+    int prevHour = -1;
+    int prevMinute = -1;
+    int paletteIndex = 0;
 
     void displayTime(int hour, int minute);
     void resetSquareFlags();
@@ -33,6 +34,11 @@ public:
     DateTime getTime();
     void setTime(DateTime now);
     void printTime(DateTime now);
+    void addHours(int hours);
+    void addMinutes(int minutes);
+    void nextPalette();
+    // Causes the clock to redraw on the next tick
+    void invalidate();
 };
 
 #endif // _FIB_CLOCK_H_
