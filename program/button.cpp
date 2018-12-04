@@ -1,22 +1,26 @@
 #include "Arduino.h"
 #include "button.h"
 
-Button::Button(int pin) {
+Button::Button(int pin)
+{
     this->pin = pin;
 
     pinMode(pin, INPUT);
 }
 
-bool Button::isOn() {
+bool Button::isOn()
+{
     return _isOn;
 }
 
-bool Button::hasChanged() {
+bool Button::hasChanged()
+{
     return _hasChanged;
 }
 
 // See: http://www.arduino.cc/en/Tutorial/Debounce
-void Button::loop() {
+void Button::loop()
+{
     // read the state of the switch into a local variable:
     int reading = digitalRead(pin);
 

@@ -2,11 +2,11 @@
 #define _FIB_CLOCK_H_
 
 #include "Arduino.h"
-#include "FastLED.h"
 #include <RTClib.h>
 #include <Wire.h>
 
 #include "constants.h"
+#include "leds.h"
 
 #define FLAG_HOUR_ON 0x01
 #define FLAG_MINUTE_ON 0x02
@@ -14,7 +14,7 @@
 class Clock {
 private:
     RTC_DS3231 rtc;
-    CRGB leds[NUM_LEDS];
+    Leds* leds;
     byte squareFlags[NUM_SQUARES];
     int prevHour = -1;
     int prevMinute = -1;
@@ -28,7 +28,7 @@ private:
     void updateLed(int squareIndex, byte flags);
 
 public:
-    Clock();
+    Clock(Leds* leds);
     void begin();
     void loop();
     DateTime getTime();

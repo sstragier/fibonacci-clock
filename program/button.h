@@ -3,7 +3,8 @@
 
 #include "Arduino.h"
 
-class Button {
+class Button
+{
 private:
     int pin;
     bool _isOn = false;

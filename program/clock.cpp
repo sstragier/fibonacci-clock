@@ -2,11 +2,15 @@
 #include "clock.h"
 #include "colors.h"
 #include "constants.h"
+#include "leds.h"
 
-Clock::Clock() {
+Clock::Clock(Leds* leds)
+{
+    this->leds = leds;
 }
 
-void Clock::begin() {
+void Clock::begin()
+{
     Wire.begin();
     rtc.begin();
 
@@ -18,33 +22,37 @@ void Clock::begin() {
         Serial.print("Resuming clock @ ");
         printTime(getTime());
     }
-
-    FastLED.addLeds<WS2811, LED_PIN, RGB>(leds, NUM_LEDS);
 }
-void Clock::addHours(int hours) {
+
+void Clock::addHours(int hours)
+{
     DateTime now = getTime();
     setTime(DateTime(now.unixtime() + hours * 3600));
 }
 
-void Clock::addMinutes(int minutes) {
+void Clock::addMinutes(int minutes)
+{
     DateTime now = getTime();
     // Add the minutes to the time and if it goes over 60, roll it over so that setting the minutes doesn't affect the hours
     minutes = (now.minute() + minutes) % 60;
     setTime(DateTime(now.year(), now.month(), now.day(), now.hour(), minutes));
 }
 
-void Clock::nextPalette() {
+void Clock::nextPalette()
+{
     paletteIndex = (paletteIndex + 1) % MAX_PALETTES;
     invalidate();
 }
 
-void Clock::invalidate() {
+void Clock::invalidate()
+{
     // Cause the clock to update the lights by invalidating the previous hour and minutes
     prevHour = -1;
     prevMinute = -1;
 }
 
-void Clock::loop() {
+void Clock::loop()
+{
     DateTime now = getTime();
     
     // If the hour and minute aren't manipulated here for the display, it means that every minute the clock could change
@@ -60,7 +68,8 @@ void Clock::loop() {
     prevMinute = minute;
 }
 
-void Clock::displayTime(int hour, int minute) {
+void Clock::displayTime(int hour, int minute)
+{
 
     resetSquareFlags();
     setSquareFlags(hour, FLAG_HOUR_ON);
@@ -69,42 +78,41 @@ void Clock::displayTime(int hour, int minute) {
 }
 
 void Clock::resetSquareFlags() {
-    for (int i = 0; i < NUM_SQUARES; i++) {
+    for (int i = 0; i < NUM_SQUARES; i++)
+    {
         squareFlags[i] = 0;
     }
 }
 
 void Clock::updateLeds() {
-    for (int i = 0; i < NUM_SQUARES; i++) {
+    for (int i = 0; i < NUM_SQUARES; i++)
+    {
         updateLed(i, squareFlags[i]);
     }
 
-    FastLED.show();
+    leds->show();
 }
 
-void Clock::updateLed(int squareIndex, byte flags) {
+void Clock::updateLed(int squareIndex, byte flags)
+{
     CRGB color = colors[paletteIndex][flags];
-
-    switch (squareIndex) {
-        case 0: leds[9] = color; break;
-        case 1: leds[8] = color; break;
-        case 2: leds[7] = color; break;
-        case 3: leds[5] = leds[6] = color; break;
-        case 4: leds[0] = leds[1] = leds[2] = leds[3] = leds[4] = color; break;
-    }
+    leds->setSquareColor(squareIndex, color);
 }
 
-DateTime Clock::getTime() {
+DateTime Clock::getTime()
+{
     return rtc.now();
 }
 
-void Clock::setTime(DateTime now) {
+void Clock::setTime(DateTime now)
+{
     Serial.print("setting time to: "); printTime(now);
     
     rtc.adjust(now);
 }
 
-void Clock::setSquareFlags(int value, byte flag) {
+void Clock::setSquareFlags(int value, byte flag)
+{
     switch (value) {
         case 1:
             switch (random(2))
