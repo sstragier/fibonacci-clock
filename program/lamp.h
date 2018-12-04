@@ -1,7 +1,7 @@
 #ifndef _CLOCK_LAMP_H_
 #define _CLOCK_LAMP_H_
 
-#include "Arduino.h";
+#include "Arduino.h"
 #include "FastLED.h"
 
 #include "leds.h"

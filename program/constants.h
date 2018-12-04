@@ -8,7 +8,7 @@
 
 #define MODE_BTN_PIN 4
 #define COLOR_BTN_PIN 5
-#define MINUTE_BTN_PIN 6
+#define OFF_BTN_PIN 6
 #define SET_BTN_PIN 7
 
 #endif // _CLOCK_CONSTANTS_H_

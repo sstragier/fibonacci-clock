@@ -23,3 +23,8 @@ void Leds::show()
 {
     FastLED.show();
 }
+
+void Leds::off()
+{
+    FastLED.clear(true);
+}

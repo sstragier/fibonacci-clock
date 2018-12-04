@@ -14,6 +14,7 @@ public:
     void begin();
     void setSquareColor(int squareIndex, CRGB color);
     void show();
+    void off();
 };
 
 #endif // _CLOCK_LEDS_H_
