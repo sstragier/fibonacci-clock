@@ -3,6 +3,9 @@
 
 #define NUM_LEDS 10
 #define NUM_SQUARES 5
+#define NUM_PALETTES 10
+#define MAX_BRIGHTNESS 3
+#define LDR_MAX 500
 
 #define LED_PIN 8
 

@@ -21,6 +21,7 @@ Button setButton(SET_BTN_PIN);
 
 bool isOn = true;
 int mode = 0;
+int brightness = MAX_BRIGHTNESS;
 
 void setup()
 {
@@ -51,15 +52,33 @@ void loop()
     else if (setButton.isOn())
     {
         // When the set button is held, the color button is used for hours and the off button is used for minutes
-        if (mode == MODE_CLOCK && colorButton.hasChanged() && colorButton.isOn())
+        if (colorButton.hasChanged() && colorButton.isOn())
         {
-            Serial.println("+1 Hour");
-            clock.addHours(1);
+            if (mode == MODE_CLOCK)
+            {
+                Serial.println("+1 Hour");
+                clock.addHours(1);
+            }
+            else if (mode == MODE_LAMP)
+            {
+                Serial.println("Next speed");
+                lamp.nextSpeed();
+                saveSettings();
+            }
         }
-        else if (mode == MODE_CLOCK && offButton.hasChanged() && offButton.isOn())
+        else if (offButton.hasChanged() && offButton.isOn())
         {
-            Serial.println("+1 Minute");
-            clock.addMinutes(1);
+            if (mode == MODE_CLOCK)
+            {
+                Serial.println("+1 Minute");
+                clock.addMinutes(1);
+            }
+            else if (mode == MODE_LAMP)
+            {
+                Serial.println("Next speed");
+                lamp.nextSpeed();
+                saveSettings();
+            }
         }
     }
     else if (offButton.hasChanged() && offButton.isOn())
@@ -80,6 +99,8 @@ void loop()
     }
 
     if (!isOn) return;
+
+    adjustBrightness();
 
     switch (mode)
     {
@@ -128,6 +149,22 @@ void nextMode() {
     saveSettings();
 }
 
+void adjustBrightness()
+{
+    int ldr = analogRead(A1);
+    ldr = constrain(ldr, 0, LDR_MAX);
+    ldr = map(ldr, 0, LDR_MAX, 1, MAX_BRIGHTNESS);
+
+    if (ldr != brightness)
+    {
+        Serial.print("Setting brightness to: ");
+        Serial.println(ldr);
+
+        brightness = ldr;
+        leds.setBrightness(brightness);
+    }
+}
+
 void loadSettings()
 {
     // FYI uninitialized EEPROM values default to 255
@@ -135,7 +172,12 @@ void loadSettings()
     if (value == MODE_CLOCK || value == MODE_LAMP) mode = value;
 
     isOn = EEPROM.read(1) != 0;
-    clock.setPalette(EEPROM.read(2));
+
+    value = EEPROM.read(2);
+    if (value < NUM_PALETTES) clock.setPalette(value);
+
+    value = EEPROM.read(3);
+    if (value < NUM_LAMP_SPEEDS) lamp.setSpeed(value);
 
     Serial.print("Loaded mode: ");
     Serial.print(mode, DEC);
@@ -146,6 +188,9 @@ void loadSettings()
 
     Serial.print("Loaded color palette: ");
     Serial.println(clock.getPalette());
+
+    Serial.print("Loaded lamp speed: ");
+    Serial.println(lamp.getSpeed());
 }
 
 void saveSettings()
@@ -153,4 +198,5 @@ void saveSettings()
     EEPROM.write(0, mode);
     EEPROM.write(1, (byte)isOn);
     EEPROM.write(2, clock.getPalette());
+    EEPROM.write(3, lamp.getSpeed());
 }

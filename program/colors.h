@@ -1,11 +1,9 @@
 #ifndef _CLOCK_COLORS_H_
 #define _CLOCK_COLORS_H_
 
-#define MAX_PALETTES 10
-#define TOTAL_PALETTES 10
+#include "constants.h"
 
-CRGB black = CRGB(0, 0, 0);
-CRGB colors[TOTAL_PALETTES][4] =
+CRGB colors[NUM_PALETTES][4] =
     {
         {
             // #1 RGB

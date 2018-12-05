@@ -50,7 +50,7 @@ int Clock::getPalette()
 
 void Clock::setPalette(int paletteIndex)
 {
-    this->paletteIndex = paletteIndex % MAX_PALETTES;
+    this->paletteIndex = paletteIndex % NUM_PALETTES;
     invalidate();
 }
 

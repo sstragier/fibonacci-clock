@@ -15,6 +15,21 @@ void Lamp::invalidate()
     iteration = 0;
 }
 
+void Lamp::nextSpeed()
+{
+    setSpeed(speedIndex + 1);
+}
+
+int Lamp::getSpeed()
+{
+    return speedIndex;
+}
+
+void Lamp::setSpeed(int index)
+{
+    speedIndex = index % NUM_LAMP_SPEEDS;
+}
+
 void Lamp::loop()
 {
     for (int i = 0; i < NUM_SQUARES; i++)
@@ -27,7 +42,7 @@ void Lamp::loop()
 
     leds->show();
 
-    if ((millis() - delay) > lastTransitionTime)
+    if ((millis() - speeds[speedIndex]) > lastTransitionTime)
     {
         lastTransitionTime = millis();
 
