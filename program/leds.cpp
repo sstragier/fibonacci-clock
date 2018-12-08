@@ -23,7 +23,7 @@ void Leds::setSquareColor(int squareIndex, CRGB color)
 
 void Leds::setBrightness(int brightness)
 {
-    brightness = constrain(brightness, 1, MAX_BRIGHTNESS);
+    brightness = constrain(brightness, 0, MAX_BRIGHTNESS);
 
     // If the brightness is already the same, don't do anything
     if (this->brightness == brightness) return;
@@ -42,6 +42,9 @@ void Leds::applyBrightness(CRGB* color)
     if (brightness != MAX_BRIGHTNESS)
     {
         int fade = 255 - (brightness * 255.0 / MAX_BRIGHTNESS);
+
+        // If the brightness is set to zero, fade by 230/256ths because fading to 255/256ths turns off the LEDs
+        if (brightness == 0) fade = 230;
         color->fadeLightBy(fade);
     }
 }

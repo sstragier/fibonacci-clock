@@ -21,7 +21,7 @@ void Ldr::loop()
 {
     int reading = analogRead(pin);
     reading = constrain(reading, 0, LDR_MAX);
-    reading = map(reading, 0, LDR_MAX, 1, MAX_BRIGHTNESS);
+    reading = map(reading, 0, LDR_MAX, 0, MAX_BRIGHTNESS);
 
     // If the light dependent resistor changed, due to noise or a shadow passing over:
     if (reading != lastReading)
