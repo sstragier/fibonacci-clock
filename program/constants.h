@@ -1,6 +1,8 @@
 #ifndef _CLOCK_CONSTANTS_H_
 #define _CLOCK_CONSTANTS_H_
 
+#include <Arduino.h>
+
 #define NUM_LEDS 10
 #define NUM_SQUARES 5
 #define NUM_PALETTES 10
@@ -8,6 +10,7 @@
 #define LDR_MAX 500
 
 #define LED_PIN 8
+#define LDR_PIN A1
 
 #define MODE_BTN_PIN 4
 #define COLOR_BTN_PIN 5

@@ -5,6 +5,7 @@
 #include "clock.h"
 #include "constants.h"
 #include "lamp.h"
+#include "ldr.h"
 #include "leds.h"
 
 #define MODE_CLOCK 0
@@ -13,6 +14,7 @@
 Leds leds;
 Clock clock(&leds);
 Lamp lamp(&leds);
+Ldr ldr(LDR_PIN);
 
 Button modeButton(MODE_BTN_PIN);
 Button colorButton(COLOR_BTN_PIN);
@@ -21,7 +23,6 @@ Button setButton(SET_BTN_PIN);
 
 bool isOn = true;
 int mode = 0;
-int brightness = MAX_BRIGHTNESS;
 
 void setup()
 {
@@ -100,7 +101,14 @@ void loop()
 
     if (!isOn) return;
 
-    adjustBrightness();
+    ldr.loop();
+    if (ldr.hasChanged())
+    {
+        Serial.print("Setting brightness to: ");
+        Serial.println(ldr.getBrightness());
+
+        leds.setBrightness(ldr.getBrightness());
+    }
 
     switch (mode)
     {
@@ -147,22 +155,6 @@ void nextMode() {
     }
     
     saveSettings();
-}
-
-void adjustBrightness()
-{
-    int ldr = analogRead(A1);
-    ldr = constrain(ldr, 0, LDR_MAX);
-    ldr = map(ldr, 0, LDR_MAX, 1, MAX_BRIGHTNESS);
-
-    if (ldr != brightness)
-    {
-        Serial.print("Setting brightness to: ");
-        Serial.println(ldr);
-
-        brightness = ldr;
-        leds.setBrightness(brightness);
-    }
 }
 
 void loadSettings()

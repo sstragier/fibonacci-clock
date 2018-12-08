@@ -23,7 +23,12 @@ void Leds::setSquareColor(int squareIndex, CRGB color)
 
 void Leds::setBrightness(int brightness)
 {
-    this->brightness = constrain(brightness, 1, MAX_BRIGHTNESS);
+    brightness = constrain(brightness, 1, MAX_BRIGHTNESS);
+
+    // If the brightness is already the same, don't do anything
+    if (this->brightness == brightness) return;
+
+    this->brightness = brightness;
 
     for (int i = 0; i < NUM_LEDS; i++) applyBrightness(&leds[i]);
 
