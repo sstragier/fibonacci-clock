@@ -66,8 +66,9 @@ void Clock::loop()
     DateTime now = getTime();
     
     // If the hour and minute aren't manipulated here for the display, it means that every minute the clock could change
-    int hour = now.hour();
-    if (hour > 12) hour %= 12;
+    int hour = now.hour() % 12;
+    // Treat 0 (e.g. midnight or noon as 12 instead of 0 so that all blocks are colored)
+    if (hour == 0) hour = 12;
     int minute = now.minute() / 5;
     
     if (hour == prevHour && minute == prevMinute) return;
