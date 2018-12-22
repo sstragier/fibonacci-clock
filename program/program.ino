@@ -52,13 +52,13 @@ void loop()
     }
     else if (setButton.isOn())
     {
-        // When the set button is held, the color button is used for hours and the off button is used for minutes
+        // When the set button is held, the color button is used for minutes and the off button is used for hours
         if (colorButton.hasChanged() && colorButton.isOn())
         {
             if (mode == MODE_CLOCK)
             {
-                Serial.println("+1 Hour");
-                clock.addHours(1);
+                Serial.println("+1 Minute");
+                clock.addMinutes(1);
             }
             else if (mode == MODE_LAMP)
             {
@@ -71,8 +71,8 @@ void loop()
         {
             if (mode == MODE_CLOCK)
             {
-                Serial.println("+1 Minute");
-                clock.addMinutes(1);
+                Serial.println("+1 Hour");
+                clock.addHours(1);
             }
             else if (mode == MODE_LAMP)
             {
