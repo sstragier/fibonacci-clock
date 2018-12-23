@@ -15,7 +15,7 @@ void Clock::begin()
     rtc.begin();
 
     if (rtc.lostPower()) {
-        Serial.println("RTC lost power, lets set the time!");
+        Serial.println("RTC lost power, lets set the time");
         setTime(DateTime(F(__DATE__), F(__TIME__)));
     }
     else {

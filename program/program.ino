@@ -41,7 +41,7 @@ void loop()
 {
     checkButtons();
 
-    // Only check for the on/off button when the clock is off (ignore all other buttons)
+    // When the clock is off, only check for the on/off button (ignore all other buttons)
     if (!isOn)
     {
         if (offButton.hasChanged() && offButton.isOn())
@@ -53,6 +53,7 @@ void loop()
     else if (setButton.isOn())
     {
         // When the set button is held, the color button is used for minutes and the off button is used for hours
+        // When the set button is held in Lamp mode, both the color and the on/off button change the speed
         if (colorButton.hasChanged() && colorButton.isOn())
         {
             if (mode == MODE_CLOCK)
